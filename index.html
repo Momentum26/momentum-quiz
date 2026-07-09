@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Momentum — Evaluación de Cualificación Profesional</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;500;700&family=Courgette&family=Plus+Jakarta+Sans:wght@700&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main id="intro" class="intro">
+
+  <div class="scanline" aria-hidden="true"></div>
+
+  <div class="intro-inner">
+
+    <img src="assets/logo.png" alt="Momentum" class="logo" />
+
+    <div class="manifesto">
+
+      <p class="manifesto-title">Desarrollado exclusivamente</p>
+
+      <p class="block">
+        para <span class="em-gold">PROFESIONALES Y EMPRENDEDORES</span> que entienden que un crecimiento sostenido<br>
+        no nace de lo que querés vender, sino de comprender con absoluta claridad<br>
+        a quién ayudás (<span class="em-gold">AVATAR</span>) y hacia dónde lo llevás (<span class="em-gold">ROMA</span>).
+      </p>
+
+      <p class="block">
+        Mientras la mayoría se agota intentando "hacer más" en solitario,<br>
+        en Momentum diseñamos sistemas de lanzamientos donde cada decisión potencia a la siguiente.
+      </p>
+
+      <p class="block">
+        No buscamos clientes pasajeros.<br>
+        Buscamos <span class="em-gold">ALIADOS</span> listos para llevar su conocimiento al terreno de las ventas masivas<br>
+        con una estructura sólida que perdure en el tiempo.
+      </p>
+
+      <p class="center-emphasis">¿Estás preparado para construir algo grande?<br><span class="center-line">Hacé clic abajo y completá tu evaluación de elegibilidad.</span></p>
+
+    </div>
+
+    <button type="button" id="startBtn" class="cta">
+      Quiero descubrir mi potencial
+      <span class="cta-arrow">→</span>
+    </button>
+
+  </div>
+
+</main>
+
+<!-- ================= CUESTIONARIO ================= -->
+<section id="quiz" class="quiz" hidden>
+  <div class="quiz-inner">
+    <img src="assets/logo.png" alt="Momentum" class="quiz-logo" />
+
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <p class="progress-label" id="progressLabel"></p>
+
+    <p class="slide-phrase" id="slidePhrase"></p>
+
+    <form id="quizForm" class="quiz-form"></form>
+
+    <div class="quiz-nav">
+      <button type="button" id="btnPrev" class="nav-btn nav-btn-ghost">Anterior</button>
+      <button type="button" id="btnNext" class="nav-btn nav-btn-solid" hidden>Siguiente</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CAPTURA DE DATOS ================= -->
+<section id="lead" class="lead" hidden>
+  <div class="lead-inner">
+    <img src="assets/logo.png" alt="Momentum" class="quiz-logo" />
+    <p class="eyebrow">Último paso</p>
+    <h2 class="lead-title">Dejá tus datos para recibir tu evaluación</h2>
+    <p class="lead-body">
+      Tus respuestas ya quedaron registradas. Completá esto para que podamos
+      analizar tu resultado y contactarte.
+    </p>
+    <form id="leadForm" class="lead-form">
+      <label class="field">
+        <span>Nombre completo</span>
+        <input type="text" id="leadName" name="name" required placeholder="Tu nombre" autocomplete="name" />
+      </label>
+      <label class="field">
+        <span>Email</span>
+        <input type="email" id="leadEmail" name="email" required placeholder="tu@email.com" autocomplete="email" />
+      </label>
+      <button type="submit" class="cta cta-block" id="leadSubmitBtn" hidden>
+        Enviar respuestas <span class="cta-arrow">→</span>
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- ================= AGRADECIMIENTO ================= -->
+<section id="thanks" class="thanks" hidden>
+  <div class="thanks-inner">
+    <svg class="check-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="30" stroke="url(#checkGrad)" stroke-width="2.5"/>
+      <path d="M20 33.5L28 41.5L44 24.5" stroke="url(#checkGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <defs>
+        <linearGradient id="checkGrad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#3E6BAE"/>
+          <stop offset="1" stop-color="#55D2E3"/>
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <p class="eyebrow">Envío exitoso</p>
+    <h2 class="thanks-title">Tu resultado fue enviado correctamente</h2>
+    <p class="thanks-body">
+      Gracias por tu tiempo y por la honestidad con la que respondiste.
+      Pronto vas a tener novedades nuestras para avanzar con este proceso.
+    </p>
+    <p class="thanks-alert">
+      Estate atento/a a tu email. Te pedimos que revises tu casilla todos los días:<br>
+      ahí te vamos a avisar si fuiste seleccionado/a y cuáles son los próximos pasos a seguir.
+    </p>
+    <p class="thanks-quote">
+      Los buenos resultados no aparecen por impulso — aparecen cuando alguien sostiene
+      una decisión más tiempo que los demás. Esa constancia es lo único que separa
+      a quien construye de quien solo persigue un sueño.
+    </p>
+  </div>
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>
