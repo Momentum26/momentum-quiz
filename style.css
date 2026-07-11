@@ -372,52 +372,6 @@ main, section { position: relative; z-index: 1; }
   transform: none;
 }
 
-/* ============================================================
-   RESPONSIVE — Tablet
-   ============================================================ */
-@media (max-width: 900px) {
-  .intro, .quiz, .lead, .thanks { padding: 7vh 6vw 9vh; }
-  .manifesto { padding: 20px 24px 24px; }
-  .manifesto .manifesto-title { font-size: 46px; line-height: 1.2; margin: 0 0 16px 0; }
-  .manifesto .statement { font-size: 28px; }
-  .manifesto p { font-size: 24px; line-height: 1.4; }
-  .manifesto p.block { margin-bottom: 34px; }
-  .em-gold, .em-accent { font-size: 28px; }
-  .manifesto .center-emphasis, .manifesto .center-line { color: var(--text); }
-}
-
-/* ============================================================
-   RESPONSIVE — Mobile
-   ============================================================ */
-@media (max-width: 600px) {
-  .intro, .quiz, .lead, .thanks { padding: 6vh 5vw 8vh; }
-  .manifesto { padding: 16px 18px 18px; border-radius: 16px; gap: 4px; }
-  .manifesto .manifesto-title { font-size: 32px; line-height: 1.2; margin: 0 0 12px 0; }
-  .manifesto .statement { font-size: 21px; }
-  .manifesto p { font-size: 18px; line-height: 1.4; }
-  .manifesto p.block { margin-bottom: 22px; }
-  .em-gold, .em-accent { font-size: 21px; }
-  .manifesto .center-emphasis, .manifesto .center-line { font-size: 21px; color: var(--text); }
-  .eyebrow { margin-bottom: 28px; font-size: 12px; }
-  .logo { width: min(220px, 62vw); margin-bottom: 20px; }
-  .quiz-logo { width: min(100px, 34vw); }
-  .closing-title { font-size: 13px; }
-  .closing-body { font-size: 14.5px; }
-  .slide-phrase { font-size: 18px; }
-  .question-text { font-size: 15.5px; }
-  .option-text { font-size: 14px; }
-  .quiz-nav { flex-wrap: wrap; }
-  .nav-btn { flex: 1 1 auto; padding: 14px 18px; }
-  .lead-title, .thanks-title { font-size: 21px; }
-  .thanks-quote { font-size: 16px; }
-  .thanks-alert { font-size: 16px; }
-}
-
-@media (max-width: 380px) {
-  .manifesto { padding: 20px 14px 14px; }
-  .manifesto .manifesto-title { font-size: 25px; }
-  .cta { padding: 14px 22px; font-size: 12px; }
-}
 
 /* ============================================================
    CUESTIONARIO
@@ -849,4 +803,55 @@ main, section { position: relative; z-index: 1; }
     0 6px 18px rgba(0, 0, 0, 0.3),
     0 0 4px rgba(255, 255, 255, 0.2);
   transition: text-shadow 0.4s ease;
+}
+
+/* ============================================================
+   RESPONSIVE — Tablet
+   ============================================================ */
+@media (max-width: 900px) {
+  .intro, .quiz, .lead, .thanks { padding: 7vh 6vw 9vh; }
+  .manifesto { padding: 20px 24px 24px; }
+  .manifesto .manifesto-title { font-size: 46px; line-height: 1.2; margin: 0 0 16px 0; }
+  .manifesto .statement { font-size: 28px; }
+  .manifesto p { font-size: 24px; line-height: 1.4; }
+  .manifesto p.block { margin-bottom: 34px; }
+  .em-gold, .em-accent { font-size: 28px; }
+  .manifesto .center-emphasis, .manifesto .center-line { color: var(--text); }
+}
+
+/* ============================================================
+   RESPONSIVE — Mobile
+   ============================================================ */
+@media (max-width: 600px) {
+  .intro, .quiz, .lead, .thanks { padding: 6vh 5vw 8vh; }
+  .manifesto { padding: 16px 18px 18px; border-radius: 16px; gap: 4px; }
+  .manifesto .manifesto-title { font-size: 26px; line-height: 1.25; margin: 0 0 12px 0; }
+  .manifesto .statement { font-size: 18px; }
+  .manifesto p { font-size: 15px; line-height: 1.45; }
+  .manifesto p.block { margin-bottom: 20px; }
+  .em-gold, .em-accent { font-size: 16px; }
+  .manifesto .center-emphasis, .manifesto .center-line { font-size: 17px; color: var(--text); }
+  .eyebrow { margin-bottom: 28px; font-size: 12px; }
+  .logo { width: min(220px, 62vw); margin-bottom: 20px; }
+  .quiz-logo { width: min(100px, 34vw); }
+  .closing-title { font-size: 13px; }
+  .closing-body { font-size: 14.5px; }
+  .slide-phrase { font-size: 15px; line-height: 1.45; max-width: 90%; }
+  .question-text { font-size: 15.5px; }
+  .option-text { font-size: 14px; }
+  .quiz-nav { flex-wrap: wrap; }
+  .nav-btn { flex: 1 1 auto; padding: 14px 18px; }
+  .lead-title, .thanks-title { font-size: 21px; }
+  .thanks-quote { font-size: 15px; line-height: 1.45; }
+  .thanks-alert { font-size: 14.5px; }
+}
+
+@media (max-width: 380px) {
+  .manifesto { padding: 20px 14px 14px; }
+  .manifesto .manifesto-title { font-size: 22px; }
+  .manifesto p { font-size: 14px; }
+  .slide-phrase { font-size: 14px; }
+  .thanks-quote { font-size: 14px; }
+  .thanks-alert { font-size: 13.5px; }
+  .cta { padding: 14px 22px; font-size: 12px; }
 }
