@@ -383,6 +383,7 @@ const leadSubmitBtn = document.getElementById("leadSubmitBtn");
 const leadNameInput = document.getElementById("leadName");
 const leadEmailInput = document.getElementById("leadEmail");
 const leadInstagramInput = document.getElementById("leadInstagram");
+const leadAltSocialInput = document.getElementById("leadAltSocial");
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 
@@ -390,12 +391,14 @@ function updateLeadSubmitVisibility() {
   const nameOk = leadNameInput.value.trim().length > 1;
   const emailOk = EMAIL_REGEX.test(leadEmailInput.value.trim());
   const instagramOk = leadInstagramInput.value.trim().length > 1;
-  leadSubmitBtn.hidden = !(nameOk && emailOk && instagramOk);
+  const altSocialOk = leadAltSocialInput.value.trim().length > 1;
+  leadSubmitBtn.hidden = !(nameOk && emailOk && (instagramOk || altSocialOk));
 }
 
 leadNameInput.addEventListener("input", updateLeadSubmitVisibility);
 leadEmailInput.addEventListener("input", updateLeadSubmitVisibility);
 leadInstagramInput.addEventListener("input", updateLeadSubmitVisibility);
+leadAltSocialInput.addEventListener("input", updateLeadSubmitVisibility);
 
 leadForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -403,8 +406,9 @@ leadForm.addEventListener("submit", async (e) => {
   const name = leadNameInput.value.trim();
   const email = leadEmailInput.value.trim();
   const instagram = leadInstagramInput.value.trim();
+  const altSocial = leadAltSocialInput.value.trim();
 
-  if (!(name.length > 1 && EMAIL_REGEX.test(email) && instagram.length > 1)) return;
+  if (!(name.length > 1 && EMAIL_REGEX.test(email) && (instagram.length > 1 || altSocial.length > 1))) return;
 
   const totalScore = Object.values(answers).reduce((sum, a) => sum + a.value, 0);
 
@@ -412,9 +416,13 @@ leadForm.addEventListener("submit", async (e) => {
     name,
     email,
     instagram,
+    altSocial,
     totalScore,
     answers: Object.fromEntries(
       Object.entries(answers).map(([qid, a]) => [`q${qid}`, a.letter])
+    ),
+    points: Object.fromEntries(
+      Object.entries(answers).map(([qid, a]) => [`q${qid}`, a.value])
     ),
   };
 
