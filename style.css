@@ -48,7 +48,7 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: 1;
   pointer-events: none;
   background: radial-gradient(ellipse 120% 120% at 50% 45%, transparent 50%, rgba(25, 45, 80, 0.16) 100%);
 }
@@ -58,14 +58,24 @@ body::after {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: 2;
   pointer-events: none;
   opacity: 0.035;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-main, section { position: relative; z-index: 1; }
+/* Red de conexiones digitales animada — vive en un <canvas> propio,
+   ver background.js. Queda por detrás de la viñeta/ruido y del
+   contenido, pero por delante del negro sólido de fondo. */
+#momentum-network {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+main, section { position: relative; z-index: 3; }
 
 .intro {
   position: relative;
@@ -727,6 +737,16 @@ main, section { position: relative; z-index: 1; }
 .field input:focus {
   border-color: rgba(212, 175, 55, 0.6);
   box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12);
+}
+
+.field-hint {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  font-size: 12.5px;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--gold-light);
 }
 
 .cta-block {
