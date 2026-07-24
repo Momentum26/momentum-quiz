@@ -42,11 +42,12 @@
   let pulses = [];
   let hubs = [];
   let journey = null;
-  let legAlpha = [0, 0, 0];
+  let trailPoints = [];
   let rafId = null;
   let running = false;
   let manifestoEl = null;
-  let avatarRevealed = false;
+  let cardRevealed = false;
+  let cardCheckCounter = 0;
 
   function setup() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -245,24 +246,18 @@
   const TRAVEL_MS = 4600;
   const HOLD_MS = 2300;
   const FADE_MS = 600;
-  const LEG_DECAY = 0.0035; // qué tan rápido se apaga un tramo ya recorrido
 
   function updateJourney(dt) {
     if (!journey || hubs.length < 3) return;
     const from = hubs[journey.fromIndex];
     const to = hubs[journey.toIndex];
 
-    // El tramo activo se enciende progresivamente con el avance
-    legAlpha = legAlpha.map((a, i) => (i === journey.leg ? a : Math.max(0.10, a - LEG_DECAY * dt)));
-
     if (journey.phase === "travel") {
       journey.t += dt / TRAVEL_MS;
-      legAlpha[journey.leg] = clamp(journey.t, 0, 1);
       if (journey.t >= 1) {
         journey.t = 1;
         journey.phase = "hold";
         journey.holdT = 0;
-        legAlpha[journey.leg] = 1;
       }
     } else if (journey.phase === "hold") {
       journey.holdT += dt;
@@ -291,51 +286,73 @@
     journey.y = from.y + (to.y - from.y) * ease;
     journey.color = lerpColor(from.color, to.color, ease);
 
-    updateAvatarReveal();
+    // Estela corta tipo cometa: solo se guardan las últimas
+    // posiciones mientras el punto está en movimiento (fase
+    // "travel"). No queda ninguna línea fija ni por delante ni
+    // por detrás — cada punto de la estela se borra solo un
+    // instante después de haberse dibujado.
+    const now = performance.now();
+    if (journey.phase === "travel") {
+      trailPoints.push({ x: journey.x, y: journey.y, color: journey.color, time: now });
+    }
+    const TRAIL_LIFETIME = 550; // ms que tarda en desvanecerse un punto de la estela
+    trailPoints = trailPoints.filter((p) => now - p.time < TRAIL_LIFETIME);
+
+    updateCardReveal();
   }
 
-  // Mientras el recorrido está detenido (o desvaneciéndose) sobre
-  // el punto "Avatar", el recuadro dorado de la portada se vuelve
-  // translúcido para dejar ver la palabra brillando detrás.
-  function updateAvatarReveal() {
+  // La ventana del recuadro (portada) se vuelve translúcida en
+  // tiempo real cada vez que el punto guiado pasa geométricamente
+  // por detrás de ella — no solo cuando llega a "Avatar" — para
+  // que se note el recorrido completo pasando por atrás.
+  function updateCardReveal() {
     if (!manifestoEl) return;
-    const atAvatar = hubs[journey.toIndex] && hubs[journey.toIndex].key === "Avatar"
-      && (journey.phase === "hold" || journey.phase === "fade");
-    if (atAvatar && !avatarRevealed) {
+    cardCheckCounter++;
+    if (cardCheckCounter % 4 !== 0) return; // no medir el layout en cada frame
+    const rect = manifestoEl.getBoundingClientRect();
+    if (rect.width === 0) return;
+    const margin = 24;
+    const inside = journey.x >= rect.left - margin && journey.x <= rect.right + margin &&
+      journey.y >= rect.top - margin && journey.y <= rect.bottom + margin;
+    if (inside && !cardRevealed) {
       manifestoEl.classList.add("is-avatar-reveal");
-      avatarRevealed = true;
-    } else if (!atAvatar && avatarRevealed) {
+      cardRevealed = true;
+    } else if (!inside && cardRevealed) {
       manifestoEl.classList.remove("is-avatar-reveal");
-      avatarRevealed = false;
+      cardRevealed = false;
     }
   }
 
   function drawTrail() {
-    // Dibuja los 3 tramos del camino (Nicho→Avatar, Avatar→ROMA,
-    // ROMA→Nicho), cada uno con su propio nivel de brillo: el
-    // tramo recién recorrido queda más marcado, los anteriores se
-    // van apagando y afinando con el tiempo.
-    const legs = [[0, 1], [1, 2], [2, 0]];
+    if (trailPoints.length < 2) return;
+    const now = performance.now();
+    const TRAIL_LIFETIME = 550;
     ctx.save();
     ctx.globalCompositeOperation = "lighter";
-    legs.forEach(([aIdx, bIdx], i) => {
-      const a = hubs[aIdx], b = hubs[bIdx];
-      if (!a || !b) return;
-      const alpha = legAlpha[i];
-      if (alpha <= 0.02) return;
-      const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
-      grad.addColorStop(0, hexToRgba(a.color, alpha * 0.5));
-      grad.addColorStop(1, hexToRgba(b.color, alpha * 0.5));
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = 0.6 + alpha * 1.2;
-      ctx.shadowColor = b.color;
-      ctx.shadowBlur = 4 * alpha;
+    for (let i = 1; i < trailPoints.length; i++) {
+      const p0 = trailPoints[i - 1];
+      const p1 = trailPoints[i];
+      const age = now - p1.time;
+      const alpha = clamp(1 - age / TRAIL_LIFETIME, 0, 1);
+      if (alpha <= 0.02) continue;
+      ctx.strokeStyle = hexToRgbaFromCss(p1.color, alpha * 0.65);
+      ctx.lineWidth = 0.5 + alpha * 2;
+      ctx.shadowColor = p1.color;
+      ctx.shadowBlur = 6 * alpha;
       ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
+      ctx.moveTo(p0.x, p0.y);
+      ctx.lineTo(p1.x, p1.y);
       ctx.stroke();
-    });
+    }
     ctx.restore();
+  }
+
+  // journey.color viene como "rgb(r, g, b)" (ver lerpColor) — este
+  // helper le agrega el canal de transparencia que haga falta.
+  function hexToRgbaFromCss(rgbStr, alpha) {
+    const nums = rgbStr.match(/\d+/g);
+    if (!nums) return `rgba(255,255,255,${alpha})`;
+    return `rgba(${nums[0]}, ${nums[1]}, ${nums[2]}, ${alpha})`;
   }
 
   function drawJourneyDot() {
@@ -358,38 +375,45 @@
     ctx.restore();
   }
 
-  // Texto con aspecto "vidrio": varias pasadas de resplandor +
-  // un brillo diagonal (highlight) cruzando la palabra.
+  // Texto con aspecto "vidrio": varias pasadas de resplandor, un
+  // relleno en degradé (en vez de un color plano y sin gracia), y
+  // un brillo diagonal cruzando la palabra, en mayúsculas.
   function drawGlassWord(text, x, y, color, opacity) {
-    const fontSize = clamp(width * 0.03, 19, 34);
+    const label = text.toUpperCase();
+    const fontSize = clamp(width * 0.032, 20, 36);
     ctx.save();
     ctx.globalAlpha = opacity;
-    ctx.font = `600 ${fontSize}px 'Syne', sans-serif`;
+    ctx.font = `700 ${fontSize}px 'Syne', sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
     // Halo exterior amplio y suave
     ctx.shadowColor = color;
-    ctx.shadowBlur = 30;
-    ctx.fillStyle = hexToRgba("#FFFFFF", 0.55);
-    ctx.fillText(text, x, y);
+    ctx.shadowBlur = 32;
+    ctx.fillStyle = hexToRgba("#FFFFFF", 0.5);
+    ctx.fillText(label, x, y);
 
-    // Núcleo definido, con brillo intermedio
-    ctx.shadowBlur = 14;
-    ctx.fillStyle = color;
-    ctx.fillText(text, x, y);
+    // Núcleo con relleno en degradé (blanco arriba, color propio
+    // abajo) — le da profundidad en vez de quedar un color plano.
+    const textWidth = ctx.measureText(label).width;
+    const coreGrad = ctx.createLinearGradient(x, y - fontSize / 2, x, y + fontSize / 2);
+    coreGrad.addColorStop(0, "#FFFFFF");
+    coreGrad.addColorStop(0.55, color);
+    coreGrad.addColorStop(1, color);
+    ctx.shadowBlur = 16;
+    ctx.fillStyle = coreGrad;
+    ctx.fillText(label, x, y);
 
-    // Reflejo tipo vidrio: degradé claro cruzando el texto
-    const textWidth = ctx.measureText(text).width;
+    // Reflejo tipo vidrio: franja clara cruzando el texto en diagonal
     ctx.shadowBlur = 0;
     const shineGrad = ctx.createLinearGradient(x - textWidth / 2, y - fontSize / 2, x + textWidth / 2, y + fontSize / 2);
     shineGrad.addColorStop(0, "rgba(255, 255, 255, 0)");
-    shineGrad.addColorStop(0.45, "rgba(255, 255, 255, 0.75)");
-    shineGrad.addColorStop(0.55, "rgba(255, 255, 255, 0.75)");
+    shineGrad.addColorStop(0.45, "rgba(255, 255, 255, 0.85)");
+    shineGrad.addColorStop(0.55, "rgba(255, 255, 255, 0.85)");
     shineGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
     ctx.fillStyle = shineGrad;
-    ctx.globalAlpha = opacity * 0.6;
-    ctx.fillText(text, x, y);
+    ctx.globalAlpha = opacity * 0.55;
+    ctx.fillText(label, x, y);
 
     ctx.restore();
   }
